@@ -1,0 +1,179 @@
+# BANK MANAGEMENT SYSTEM
+# Mini Project Using Python
+
+accounts = {}
+
+
+# Function 1: Create New Account
+def add_account():
+    print("\n===== CREATE NEW ACCOUNT =====")
+
+    name = input("Enter customer name: ")
+    mobile = input("Enter mobile number: ")
+
+    if not mobile.isdigit() or len(mobile) != 10:
+        print("Invalid mobile number!")
+        return
+
+    if mobile in accounts:
+        print("Account already exists with this mobile number!")
+        return
+
+    try:
+        balance = float(input("Enter opening bank balance: "))
+
+        if balance < 0:
+            print("Balance cannot be negative!")
+            return
+
+    except ValueError:
+        print("Please enter a valid amount!")
+        return
+
+    accounts[mobile] = {
+        "name": name,
+        "balance": balance
+    }
+
+    print("\nAccount created successfully!")
+    print("Customer Name:", name)
+    print("Mobile Number:", mobile)
+    print("Opening Balance: Rs.", format(balance, ".2f"))
+
+
+# Function 2: Deposit Money
+def deposit_money():
+    print("\n===== DEPOSIT MONEY =====")
+
+    mobile = input("Enter your mobile number: ")
+
+    if mobile not in accounts:
+        print("Account not found!")
+        return
+
+    try:
+        amount = float(input("Enter money to deposit: "))
+
+        if amount <= 0:
+            print("Enter an amount greater than zero!")
+            return
+
+    except ValueError:
+        print("Please enter a valid amount!")
+        return
+
+    accounts[mobile]["balance"] += amount
+
+    print("Your money has been deposited successfully!")
+    print("Deposited Amount: Rs.", format(amount, ".2f"))
+    print("Current Balance: Rs.",
+          format(accounts[mobile]["balance"], ".2f"))
+
+
+# Function 3: Withdraw Money
+def withdraw_money():
+    print("\n===== WITHDRAW MONEY =====")
+
+    mobile = input("Enter your mobile number: ")
+
+    if mobile not in accounts:
+        print("Account not found!")
+        return
+
+    try:
+        amount = float(input("Enter money to withdraw: "))
+
+        if amount <= 0:
+            print("Enter an amount greater than zero!")
+            return
+
+    except ValueError:
+        print("Please enter a valid amount!")
+        return
+
+    if amount > accounts[mobile]["balance"]:
+        print("Insufficient balance!")
+        return
+
+    accounts[mobile]["balance"] -= amount
+
+    print("Withdrawal successful!")
+    print("Withdrawn Amount: Rs.", format(amount, ".2f"))
+    print("Remaining Balance: Rs.",
+          format(accounts[mobile]["balance"], ".2f"))
+
+
+# Function 4: View Current Balance
+def view_balance():
+    print("\n===== CHECK BALANCE =====")
+
+    mobile = input("Enter your mobile number: ")
+
+    if mobile not in accounts:
+        print("Account not found!")
+        return
+
+    print("\nAccount Details")
+    print("Customer Name:", accounts[mobile]["name"])
+    print("Mobile Number:", mobile)
+    print("Your Current Balance: Rs.",
+          format(accounts[mobile]["balance"], ".2f"))
+
+
+# Main Function
+def main():
+    while True:
+        print("\n================================")
+        print("     BANK MANAGEMENT SYSTEM")
+        print("================================")
+        print("1. Create New Account")
+        print("2. Deposit Money")
+        print("3. Withdraw Money")
+        print("4. View Current Balance")
+        print("5. Exit")
+        print("================================")
+
+        choice = input("Enter your choice (1-5): ")
+
+        if choice == "1":
+            add_account()
+
+        elif choice == "2":
+            deposit_money()
+
+        elif choice == "3":
+            withdraw_money()
+
+        elif choice == "4":
+            view_balance()
+
+        elif choice == "5":
+            print("\nThank you for using our bank system!")
+            print("Exiting program...")
+            break
+
+        else:
+            print("Invalid choice! Please select 1 to 5.")
+
+
+# Start the Program
+if __name__ == "__main__":
+    main()
+    from openpyxl import Workbook, load_workbook
+import os
+
+FILE = "bank_data.xlsx"
+
+def save_to_excel(name, mobile, balance, transaction="Account Created"):
+    if os.path.exists(FILE):
+        wb = load_workbook(FILE)
+        ws = wb.active
+    else:
+        wb = Workbook()
+        ws = wb.active
+        ws.append(["Name", "Mobile", "Balance", "Transaction"])
+
+    ws.append([name, mobile, balance, transaction])
+    wb.save(FILE)
+
+    print("Data successfully saved to Excel!")
